@@ -12,7 +12,7 @@ This Python script serves as a reminder tool for upcoming trash collection event
 Rename .env.example file and edit it:
 
 - WEBHOOK_URL= Discord Webhook URL 
-- IGNORE_SUBJECTS=["Biotonne"] : leave empty if all should be sent
+- IGNORE_SUBJECTS=["Biotonne"] #Cant yet ignore Sonderabfall - leave empty if all should be sent
 - ALL_NOTIFICATION_SUBJECTS = ["Restmüll + Gelber-Sack", "Papiertonne", "Biotonne", "Gelber-Sack", "Sonderabfall Abgabestelle"]
 - CSV_FILE_PATH=Reichelsheim-Reichelsheim-2024.csv # URL to get the CSV: https://www.reso-gmbh.de/abfuhrplaene/ ( german Excel (Semicolon separated))
 
