@@ -7,8 +7,6 @@ from dotenv import load_dotenv
 
 logging.basicConfig(filename='TrashNotify.log', level=logging.WARNING,
                     format='%(asctime)s:%(levelname)s:%(message)s', filemode='a')
-load_dotenv()
-
 
 def send_webhook_message(message, webhook_url):
     data = {"content": message}
@@ -16,22 +14,18 @@ def send_webhook_message(message, webhook_url):
     response = requests.post(webhook_url, json=data)
 
     if response.status_code == 204:
-        message = "Discord notification sent successfully!"
+        message = f"Discord notification sent successfully! : {message}"
         print(message)
         logging.info(message)
     else:
-        message = f"Failed to send Discord notification. Status code: {response.status_code}"
+        message = f"Failed to send Discord notification. Status code: {response.status_code} : {message}"
         print(message)
         logging.warning(message)
 
 
 def current_year_match(start_date, current_date, webhook_url) -> bool:
-    if start_date.year < current_date.year:
-        message = f"Achtung: CSV von dem Vorjahr erkannt."
-        send_webhook_message(message, webhook_url)
-        return False
-    elif start_date.year > current_date.year:
-        message = f"Achtung: CSV fürs neue Jahr erkannt."
+    if start_date.year != current_date.year:
+        message = f"Achtung: CSV fehler. Jahr in CSV entspricht nicht dem Aktuellen."
         send_webhook_message(message, webhook_url)
         return False
     return True
@@ -61,7 +55,7 @@ def check_and_send_reminders(csv_file, webhook_url):
 
 
 def main():
-    # Beispielaufruf der Funktion mit der CSV-Datei
+    load_dotenv()
     webhook_url = os.getenv('WEBHOOK_URL', "") or logging.exception("NO WEBHOOK URL FOUND IN ENV FILE")
     csv_file_path = os.getenv('CSV_FILE_PATH', "") or logging.exception("NO CSV PATH URL FOUND IN ENV FILE")
     check_and_send_reminders(csv_file_path, webhook_url)
