@@ -41,8 +41,8 @@ def check_and_send_reminders(csv_file, webhook_url):
             end_date = row['End Date']
             end_time = row['End Time']
             location = row['Location']
-            description = row['Description']
-
+            #description = row['Description'] sucks because wrong message
+            description  = f"{subject} heute rausstellen. Wird morgen abgeholt."
             start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
             # Because notification should be sent one day before Trash collection
             notification_date = start_date - datetime.timedelta(days=1)
