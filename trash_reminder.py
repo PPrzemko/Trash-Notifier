@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 logging.basicConfig(filename='TrashNotify.log', level=logging.WARNING,
                     format='%(asctime)s:%(levelname)s:%(message)s', filemode='a')
 
+
 def send_webhook_message(message, webhook_url):
     data = {"content": message}
 
@@ -25,8 +26,9 @@ def send_webhook_message(message, webhook_url):
 
 def current_year_match(start_date, current_date, webhook_url) -> bool:
     if start_date.year != current_date.year:
-        message = f"Achtung: CSV fehler. Jahr in CSV entspricht nicht dem Aktuellen."
+        message = f"Achtung: CSV fehler. Jahr in CSV entspricht nicht dem Aktuellen. current_date {current_date}, csv_date {start_date}"
         send_webhook_message(message, webhook_url)
+        logging.error(message)
         return False
     return True
 
@@ -41,7 +43,7 @@ def check_and_send_reminders(csv_file, webhook_url):
             end_date = row['End Date']
             end_time = row['End Time']
             location = row['Location']
-            #description = row['Description'] #sucks because icorrect message. PUT OUT TRASH TODAY!
+            # description = row['Description'] #sucks because icorrect message. PUT OUT TRASH TODAY!
             description = f"{subject} heute rausstellen. Wird morgen abgeholt."
             start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
             # Because notification should be sent one day before Trash collection
@@ -56,7 +58,6 @@ def check_and_send_reminders(csv_file, webhook_url):
 
 def main():
     load_dotenv()
-    # need to throw error if no .env
     webhook_url = os.getenv('WEBHOOK_URL', "")
     csv_file_path = os.getenv('CSV_FILE_PATH', "")
     check_and_send_reminders(csv_file_path, webhook_url)
