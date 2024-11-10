@@ -1,0 +1,25 @@
+# Verwenden Sie ein Alpine-Basisimage
+FROM python:3.9-slim
+
+# Setzen Sie das Arbeitsverzeichnis
+WORKDIR /app
+
+# Installieren Sie die Python-Abhängigkeiten
+RUN pip install requests python-dotenv
+
+# Kopieren Sie die Anwendungsdateien in das Arbeitsverzeichnis
+COPY trash_reminder.py /app/trash_reminder.py
+COPY entrypoint.sh /app/entrypoint.sh
+
+# Environment-Variablen konfigurieren
+ENV WEBHOOK_URL=""
+ENV IGNORE_SUBJECTS=""
+ENV ALL_NOTIFICATION_SUBJECTS=""
+ENV DELIMITER=";"
+ENV NOTIFICATION_TIME="10:00"
+
+# Skripte ausführbar machen
+RUN chmod +x /app/entrypoint.sh /app/trash_reminder.py
+
+# Entrypoint festlegen
+ENTRYPOINT ["/app/entrypoint.sh"]
