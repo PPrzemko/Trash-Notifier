@@ -3,7 +3,6 @@ import datetime
 import logging
 import os
 import requests
-from dotenv import load_dotenv
 
 logging.basicConfig(filename='TrashNotify.log', level=logging.WARNING,
                     format='%(asctime)s:%(levelname)s:%(message)s', filemode='a')
@@ -34,10 +33,12 @@ def current_year_match(start_date, current_date, webhook_url) -> bool:
 
 
 def check_and_send_reminders(csv_file, delimiter, webhook_url):
-    with open(csv_file, newline='', encoding='utf-8') as csvfile:
+    with open(csv_file, newline='', encoding='utf-8-sig') as csvfile:
         reader = csv.DictReader(csvfile, delimiter)
         print(f"Delimiter: {delimiter}")
+        print(f"CSV Headers: {reader.fieldnames}")
         for row in reader:
+            print(f"Processing row: {row}")
             subject = row['Subject']
             start_date = row['Start Date']
             start_time = row['Start Time']
@@ -46,7 +47,11 @@ def check_and_send_reminders(csv_file, delimiter, webhook_url):
             location = row['Location']
             # description = row['Description'] #sucks because icorrect message. PUT OUT TRASH TODAY!
             description = f"{subject} heute rausstellen. Wird morgen abgeholt."
-            start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
+            try:
+                start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
+            except ValueError as ve:
+                print(f"Invalid date format in row: {row}. Error: {ve}")
+                continue
             # Because notification should be sent one day before Trash collection
             notification_date = start_date - datetime.timedelta(days=1)
             print (f"Notification_Date: {notification_date}")
@@ -59,7 +64,6 @@ def check_and_send_reminders(csv_file, delimiter, webhook_url):
 
 
 def main():
-    load_dotenv()
     webhook_url = os.getenv("WEBHOOK_URL")
     csv_file_path = "/app/trashcalender.csv"
     delimiter = os.getenv("DELIMITER")
