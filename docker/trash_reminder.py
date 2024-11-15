@@ -34,18 +34,15 @@ def current_year_match(start_date, current_date, webhook_url) -> bool:
 
 def check_and_send_reminders(csv_file, delimiter, webhook_url):
     with open(csv_file, newline='', encoding='utf-8-sig') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter)
-        print(f"Delimiter: {delimiter}")
-        print(f"CSV Headers: {reader.fieldnames}")
+        reader = csv.DictReader(csvfile, delimiter=delimiter)
         for row in reader:
-            print(f"Processing row: {row}")
-            subject = row['Subject']
-            start_date = row['Start Date']
-            start_time = row['Start Time']
-            end_date = row['End Date']
-            end_time = row['End Time']
-            location = row['Location']
-            # description = row['Description'] #sucks because icorrect message. PUT OUT TRASH TODAY!
+            subject = row["Subject"]
+            start_date = row["Start Date"]
+            start_time = row["Start Time"]
+            end_date = row["End Date"]
+            end_time = row["End Time"]
+            location = row["Location"]
+            # description = row['Description'] #sucks because incorrect message. PUT OUT TRASH TODAY!
             description = f"{subject} heute rausstellen. Wird morgen abgeholt."
             try:
                 start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
@@ -54,7 +51,6 @@ def check_and_send_reminders(csv_file, delimiter, webhook_url):
                 continue
             # Because notification should be sent one day before Trash collection
             notification_date = start_date - datetime.timedelta(days=1)
-            print (f"Notification_Date: {notification_date}")
             current_date = datetime.datetime.now().date()
 
             if not current_year_match(start_date, current_date, webhook_url): break

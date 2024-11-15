@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Installieren Sie die Python-Abhängigkeiten
-RUN pip install requests python-dotenv
+RUN pip install requests
 
 # Kopieren Sie die Anwendungsdateien in das Arbeitsverzeichnis
 COPY trash_reminder.py /app/trash_reminder.py
